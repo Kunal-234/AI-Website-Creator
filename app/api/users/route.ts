@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     };
 
     await db.insert(usersTable).values(data);
-    return NextResponse.json({ user: data });
+    return NextResponse.json({ user: data, message: "user created successfully" });
   }
 
   return NextResponse.json({ user: userResult[0] });

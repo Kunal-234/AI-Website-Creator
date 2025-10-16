@@ -21,11 +21,10 @@ const Provider = ({
     try {
       const result = await axios.post('/api/users',{})
       console.log(result)
-      
+      // setUserDetail(result.data?.user)
     } catch (error) {
       console.log('internal server error',error)
     }
-    // setUserDetail(result.data?.user)
   }
 
   return (

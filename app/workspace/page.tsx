@@ -1,4 +1,4 @@
-import Hero from '@/components/Hero'
+import Hero from '@/app/_components/Hero'
 import React from 'react'
 
 const page = () => {

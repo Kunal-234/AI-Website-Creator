@@ -1,8 +1,11 @@
 'use client'
 import React, { useState } from 'react'
-import { Button } from './ui/button'
+import { Button } from '../../components/ui/button'
 import { ArrowUp, HomeIcon, ImagePlus, Key, LayoutDashboard, User } from 'lucide-react'
-import { SignInButton } from '@clerk/nextjs';
+import { SignInButton, useUser } from '@clerk/nextjs';
+import Link from 'next/link';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
 const suggestions = [
   {
@@ -30,6 +33,27 @@ const suggestions = [
 const Hero = () => {
 
   const [userInput, setUserInput] = useState<string>('');
+  const {user} = useUser();
+
+  const CreateNewProjext = async()=>{
+    const projectId = uuidv4();
+    const frameId = generateRandomFrameNumber();
+    const messages=  [{
+          role: 'user',
+          content: userInput
+        }]
+    try {
+      const result = await axios.post('/api/projects',{
+        projectId,
+        frameId,
+        messages
+      })
+      console.log(result.data)
+    } catch (error) {
+      
+      console.log(error)
+    }
+  }
 
   return (
     <div className='flex flex-col items-center justify-center h-[80vh]'>
@@ -47,12 +71,19 @@ const Hero = () => {
           <Button variant={'ghost'}>
             <ImagePlus />
           </Button>
-          <SignInButton mode='modal' forceRedirectUrl={'/workspace'}>
-          {}
+        {!user ? 
+         <SignInButton mode='modal' forceRedirectUrl={'/workspace'}>
             <Button disabled={!userInput} size={'sm'}>
               <ArrowUp />
             </Button>
-          </SignInButton>
+          </SignInButton> :
+          // <Link href={'/workspace'}>
+            <Button disabled={!userInput} size={'sm'}>
+              <ArrowUp />
+            </Button>
+          // </Link>
+        } 
+         
         </div>
       </div>
       {/* Suggestions */}
@@ -71,3 +102,9 @@ const Hero = () => {
 }
 
 export default Hero
+
+
+const generateRandomFrameNumber = () => {
+  const num = Math.floor(Math.random() * 10000);
+  return num;
+}
