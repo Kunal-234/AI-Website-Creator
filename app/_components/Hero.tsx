@@ -1,11 +1,13 @@
 'use client'
 import React, { useState } from 'react'
 import { Button } from '../../components/ui/button'
-import { ArrowUp, HomeIcon, ImagePlus, Key, LayoutDashboard, User } from 'lucide-react'
+import { ArrowUp, HomeIcon, ImagePlus, Key, LayoutDashboard, Loader2Icon, User } from 'lucide-react'
 import { SignInButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 const suggestions = [
   {
@@ -34,8 +36,11 @@ const Hero = () => {
 
   const [userInput, setUserInput] = useState<string>('');
   const {user} = useUser();
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const CreateNewProjext = async()=>{
+  const CreateNewProject = async()=>{
+    setLoading(true);
     const projectId = uuidv4();
     const frameId = generateRandomFrameNumber();
     const messages=  [{
@@ -49,9 +54,13 @@ const Hero = () => {
         messages
       })
       console.log(result.data)
+      toast.success('Project created successfully')
+      router.push(`/workspace/${projectId}?frameId=${frameId}`);
+      setLoading(false);
     } catch (error) {
-      
+      toast.error('Error creating project')
       console.log(error)
+      setLoading(false);
     }
   }
 
@@ -78,8 +87,10 @@ const Hero = () => {
             </Button>
           </SignInButton> :
           // <Link href={'/workspace'}>
-            <Button disabled={!userInput} size={'sm'}>
-              <ArrowUp />
+            <Button disabled={!userInput || loading}
+            onClick={CreateNewProject}
+             size={'sm'}>
+           {loading? <Loader2Icon className='animate-spin'/> : <ArrowUp /> } 
             </Button>
           // </Link>
         } 
