@@ -4,13 +4,15 @@ const isPublicRoute = createRouteMatcher([
   '/sign-in(.*)',
   '/sign-up(.*)',
   '/',
-  '/workspace'
+  '/workspace',
+  '/api/(.*)' // Temporarily make API routes public for testing
 ])
 
 export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    await auth.protect()
-  }
+  // Temporarily disable authentication for development
+  // if (!isPublicRoute(req)) {
+  //   await auth.protect()
+  // }
 })
 
 export const config = {

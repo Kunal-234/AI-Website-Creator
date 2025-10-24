@@ -19,7 +19,8 @@ const Provider = ({
   
   const createNewUser =async()=>{
     try {
-      const result = await axios.post('/api/users',{})
+      // Include credentials so the browser sends Clerk's session cookie to the API
+      const result = await axios.post('/api/users', {}, { withCredentials: true })
       console.log(result)
       // setUserDetail(result.data?.user)
     } catch (error) {

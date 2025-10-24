@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { Button } from '../../components/ui/button'
 import { ArrowUp, HomeIcon, ImagePlus, Key, LayoutDashboard, Loader2Icon, User } from 'lucide-react'
-import { SignInButton, useUser } from '@clerk/nextjs';
+import { SignInButton, UserButton, useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
@@ -55,7 +55,7 @@ const Hero = () => {
       })
       console.log(result.data)
       toast.success('Project created successfully')
-      router.push(`/workspace/${projectId}?frameId=${frameId}`);
+      router.push(`/playground/${projectId}?frameId=${frameId}`);
       setLoading(false);
     } catch (error) {
       toast.error('Error creating project')
@@ -67,6 +67,7 @@ const Hero = () => {
   return (
     <div className='flex flex-col items-center justify-center h-[80vh]'>
       {/* Header and desc S */}
+      <UserButton/>
       <h2 className='font-bold text-6xl'>What should we Design?</h2>
       <p className='mt-2 text-xl text-gray-500'>Generate, Edit and Explore desig with AI, Export code as well</p>
 
