@@ -22,9 +22,9 @@ export function AppSidebar() {
     return (
         <Sidebar>
             <SidebarHeader >
-                <div className="flex items-center gap-2">
-                    <Image src={'/logo.svg'} width={35} height={35} alt="logo" />
-                    <h2 className="font-bold text-xl">NextBuilder</h2>
+                <div className="flex items-center gap-2 mt-3">
+                    <Image className="ml-3" src={'/logo.svg'} width={50} height={50} alt="logo" />
+                    <h2 className=" text-2xl text-gray-700">NextBuilder</h2>
                 </div>
                 <Link href={'/workspace'} className="mt-5 w-full" >
                     <Button className="w-full">
@@ -48,9 +48,9 @@ export function AppSidebar() {
                         Upgrade to Unlimited
                     </Button>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mt-2 justify-center">
                     <UserButton/>
-                    <Button variant={"ghost"}>Settings</Button>
+                    <Button variant={"ghost"} className="font-semibold">Settings</Button>
                 </div>
             </SidebarFooter>
         </Sidebar>

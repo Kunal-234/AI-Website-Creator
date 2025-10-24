@@ -69,7 +69,7 @@ const Hero = () => {
       {/* Header and desc S */}
       <UserButton/>
       <h2 className='font-bold text-6xl'>What should we Design?</h2>
-      <p className='mt-2 text-xl text-gray-500'>Generate, Edit and Explore desig with AI, Export code as well</p>
+      <p className='mt-2 text-xl text-gray-500'>Generate, Edit and Explore Design with AI, Export code as well</p>
 
       {/* input box */}
       <div className='w-full max-w-2xl px-5 pt-5 pb-2 border mt-5 rounded-2xl'>

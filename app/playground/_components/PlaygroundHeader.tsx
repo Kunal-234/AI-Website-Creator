@@ -5,7 +5,7 @@ import React from 'react'
 const PlaygroundHeader = () => {
   return (
     <div className='flex justify-between items-center p-4 shadow'>
-      <Image src={'/logo.svg'} alt='logo' height={40} width={40} />
+      <Image className='mx-3' src={'/logo.svg'} alt='logo' height={50} width={50} />
       <Button>Save</Button>
     </div>
   )
