@@ -1,24 +1,52 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PlaygroundHeader from '../_components/PlaygroundHeader'
 import ChatSection from '../_components/ChatSection'
 import WebsiteDesign from '../_components/WebsiteDesign'
 import ElementSetting from '../_components/ElementSetting'
 import { useParams, useSearchParams } from 'next/navigation'
+import axios from 'axios'
+
+export type Frame = {
+  projectId: string,
+  frameId: string,
+  designCode: string,
+  chatMessages: Messages[]
+}
+export type Messages = {
+  role: string,
+  content: string
+}
 
 const Playground = () => {
-    const {projectId} = useParams();
-    const params = useSearchParams()
-    const frameId = params.get('frameId')
-    console.log(` ProjectId: ${projectId}, FrameId: ${frameId} `)
+  const { projectId } = useParams();
+  const params = useSearchParams()
+  const frameId = params.get('frameId')
+  const [frameDetail, setFrameDetail] = useState<Frame>();
+
+  useEffect(() => {
+    frameId && GetFrameDetails()
+  }, [frameId])
+
+  const GetFrameDetails = async () => {
+    const result = await axios.get('/api/frames?frameId=' + frameId + '&projectId=' + projectId)
+    console.log(result.data)
+    setFrameDetail(result.data)
+  }
+
+  const SendMessage = (userInput:string)=>{
+
+  }
   return (
     <div>
-      <PlaygroundHeader/>
+      <PlaygroundHeader />
 
       <div className='flex'>
-      <ChatSection/>
-      <WebsiteDesign/>
-      <ElementSetting/>
+        <ChatSection messages={frameDetail?.chatMessages ?? []}
+        onSend={(input: string)=> SendMessage(input)}
+         />
+        <WebsiteDesign />
+        <ElementSetting />
       </div>
 
     </div>

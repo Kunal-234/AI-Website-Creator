@@ -48,7 +48,7 @@ export function AppSidebar() {
                         Upgrade to Unlimited
                     </Button>
                 </div>
-                <div className="flex items-center gap-2 mt-2 justify-center">
+                <div className="flex items-center mt-2 justify-center">
                     <UserButton/>
                     <Button variant={"ghost"} className="font-semibold">Settings</Button>
                 </div>
