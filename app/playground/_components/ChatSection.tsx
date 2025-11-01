@@ -33,7 +33,7 @@ const ChatSection = ({ messages, onSend }: Props) => {
         onChange={(event)=>setInput(event.target.value)}
         value={input}
         />
-        <Button><ArrowUp /></Button>
+        <Button onClick={handleSend}><ArrowUp /></Button>
       </div>
     </div>
   )
