@@ -73,8 +73,8 @@ const Playground = () => {
   const frameId = params.get('frameId')
   const [frameDetail, setFrameDetail] = useState<Frame>();
   const [loading, setLoading] = useState<boolean>(false)
-  const [messages, setMessages] = useState<Messages[]>()
-  const [generatedCode, setGeneratedCode] = useState<any>()
+  const [messages, setMessages] = useState<Messages[]>([])
+  const [generatedCode, setGeneratedCode] = useState<string>('')
 
   useEffect(() => {
     frameId && GetFrameDetails()
@@ -84,6 +84,12 @@ const Playground = () => {
     const result = await axios.get('/api/frames?frameId=' + frameId + '&projectId=' + projectId)
     console.log(result.data)
     setFrameDetail(result.data)
+    if (result.data?.chatMessages.length === 1) {
+      const userMsg = result.data?.chatMessages[0].content;
+      SendMessage(userMsg)
+    } else{
+      setMessages(result.data?.chatMessages)
+    }
   }
 
   const SendMessage = async (userInput: string) => {
@@ -91,7 +97,7 @@ const Playground = () => {
 
     //Add user msg to chat
     setMessages((prev: any) => [
-      ...prev,
+      ...(prev ?? []),
       { role: 'user', content: userInput }
     ])
 
@@ -133,30 +139,41 @@ const Playground = () => {
     // After streaming end
     if (!isCode) {
       setMessages((prev: any) => [
-        ...prev,
+        ...(prev ?? []),
         { role: 'assistant', content: aiResponse }
       ])
     } else {
       setMessages((prev: any) => [
-        ...prev,
+        ...(prev ?? []),
         { role: 'assistant', content: 'Your code is ready!' }
       ])
     }
   }
 
   useEffect(() => {
-    console.log(generatedCode)
-  }, [generatedCode])
+    if (messages.length>0 && !loading) {
+      SaveMessages()
+    }
+  }, [messages])
+
+  const SaveMessages = async () => {
+    const result = await axios.put('/api/chats', {
+      messages, frameId
+    })
+  }
 
   return (
     <div>
       <PlaygroundHeader />
 
       <div className='flex'>
-        <ChatSection messages={messages ?? []}
-          onSend={(input: string) => SendMessage(input)}
+        <ChatSection
+          loading={loading}
+          messages={messages ?? []}
+          onSend={(input: string) => SendMessage(input)
+          }
         />
-        <WebsiteDesign />
+        <WebsiteDesign generatedCode={generatedCode?.replace('```','')} />
         <ElementSetting />
       </div>
 
