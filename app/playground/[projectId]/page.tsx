@@ -3,18 +3,20 @@ import React, { useEffect, useState } from 'react'
 import PlaygroundHeader from '../_components/PlaygroundHeader'
 import ChatSection from '../_components/ChatSection'
 import WebsiteDesign from '../_components/WebsiteDesign'
-import ElementSetting from '../_components/ElementSetting'
+// import ElementSetting from '../_components/ElementSetting'
 import { useParams, useSearchParams } from 'next/navigation'
 import axios from 'axios'
+import { toast } from 'sonner'
 
 export type Frame = {
-  projectId: string,
-  frameId: string,
-  designCode: string,
+  projectId: string
+  frameId: string
+  designCode: string
   chatMessages: Messages[]
 }
+
 export type Messages = {
-  role: string,
+  role: string
   content: string
 }
 
@@ -64,102 +66,143 @@ Example:
    - User: "Hi" → Response: "Hello! How can I help you today?"
    - User: "Build a responsive landing page with Tailwind CSS" 
      → Response: [Generate full HTML code as per instructions above]
-`;
-
+`
 
 const Playground = () => {
-  const { projectId } = useParams();
+  const { projectId } = useParams()
   const params = useSearchParams()
   const frameId = params.get('frameId')
-  const [frameDetail, setFrameDetail] = useState<Frame>();
+
+  const [frameDetail, setFrameDetail] = useState<Frame>()
   const [loading, setLoading] = useState<boolean>(false)
   const [messages, setMessages] = useState<Messages[]>([])
   const [generatedCode, setGeneratedCode] = useState<string>('')
 
   useEffect(() => {
-    frameId && GetFrameDetails()
+    if (frameId) GetFrameDetails()
   }, [frameId])
 
+  // ✅ Fixed function — null-safe and error-handled
   const GetFrameDetails = async () => {
-    const result = await axios.get('/api/frames?frameId=' + frameId + '&projectId=' + projectId)
-    console.log(result.data)
-    setFrameDetail(result.data)
-    if (result.data?.chatMessages.length === 1) {
-      const userMsg = result.data?.chatMessages[0].content;
-      SendMessage(userMsg)
-    } else{
-      setMessages(result.data?.chatMessages)
+    try {
+      const result = await axios.get(
+        `/api/frames?frameId=${frameId}&projectId=${projectId}`
+      )
+      console.log(result.data)
+      setFrameDetail(result.data)
+
+      const designCode = result.data?.designCode
+
+      if (typeof designCode === 'string' && designCode.trim().length > 0) {
+        const index = designCode.indexOf('```html')
+        const formattedCode =
+          index !== -1 ? designCode.slice(index + 7) : designCode
+        setGeneratedCode(formattedCode)
+      } else {
+        console.warn('No valid designCode found:', designCode)
+        setGeneratedCode('')
+      }
+
+      if (result.data?.chatMessages?.length === 1) {
+        const userMsg = result.data.chatMessages[0].content
+        SendMessage(userMsg)
+      } else {
+        setMessages(result.data?.chatMessages ?? [])
+      }
+    } catch (error) {
+      console.error('Error fetching frame details:', error)
+      toast.error('Failed to load frame details')
     }
   }
 
   const SendMessage = async (userInput: string) => {
     setLoading(true)
 
-    //Add user msg to chat
+    // Add user msg to chat
     setMessages((prev: any) => [
       ...(prev ?? []),
-      { role: 'user', content: userInput }
+      { role: 'user', content: userInput },
     ])
 
     const result = await fetch('/api/ai-model', {
       method: 'POST',
       body: JSON.stringify({
         messages: [
-          // ...frameDetail?.chatMessages!,
-          { role: 'user', content: prompt.replace('{userInput}', userInput) } //pass prompt
-        ]
-      })
+          {
+            role: 'user',
+            content: prompt.replace('{userInput}', userInput),
+          },
+        ],
+      }),
     })
 
-    const reader = result.body?.getReader();
-    // if(!reader) return;
-
-    const decoder = new TextDecoder();
-    let aiResponse = '';
-    let isCode = false;
+    const reader = result.body?.getReader()
+    const decoder = new TextDecoder()
+    let aiResponse = ''
+    let isCode = false
 
     while (true) {
-      //@ts-ignore
-      const { done, value } = await reader?.read();
-      if (done) break;
+      // @ts-ignore
+      const { done, value } = await reader?.read()
+      if (done) break
 
       const chunk = decoder.decode(value, { stream: true })
       aiResponse += chunk
-      //Check if AI start sending code
+
       if (!isCode && aiResponse.includes('```html')) {
-        isCode = true;
-        const index = aiResponse.indexOf("```html") + 7;
-        const initialCodeChunck = aiResponse.slice(index)
-        setGeneratedCode((prev: any) => prev + initialCodeChunck)
+        isCode = true
+        const index = aiResponse.indexOf('```html') + 7
+        const initialCodeChunk = aiResponse.slice(index)
+        setGeneratedCode((prev: any) => prev + initialCodeChunk)
       } else if (isCode) {
         setGeneratedCode((prev: any) => prev + chunk)
       }
     }
-    setLoading(false)
-    // After streaming end
+
+    await SavedGeneratedCode(aiResponse)
+
     if (!isCode) {
       setMessages((prev: any) => [
         ...(prev ?? []),
-        { role: 'assistant', content: aiResponse }
+        { role: 'assistant', content: aiResponse },
       ])
     } else {
       setMessages((prev: any) => [
         ...(prev ?? []),
-        { role: 'assistant', content: 'Your code is ready!' }
+        { role: 'assistant', content: 'Your code is ready!' },
       ])
     }
+
+    setLoading(false)
   }
 
   useEffect(() => {
-    if (messages.length>0 && !loading) {
+    if (messages.length > 0 && !loading) {
       SaveMessages()
     }
   }, [messages])
 
   const SaveMessages = async () => {
-    const result = await axios.put('/api/chats', {
-      messages, frameId
-    })
+    try {
+      await axios.put('/api/chats', { messages, frameId })
+    } catch (error) {
+      console.error('Error saving messages:', error)
+    }
+  }
+
+  const SavedGeneratedCode = async (code: string) => {
+    try {
+      const result = await axios.put('/api/frames', {
+        designCode: code,
+        frameId,
+        projectId,
+      })
+      console.log(result.data)
+      toast.success('Website is Ready!')
+    } catch (error) {
+      console.error('Error saving generated code:', error)
+      toast.error('Failed to save generated code')
+    }
   }
 
   return (
@@ -170,13 +213,11 @@ const Playground = () => {
         <ChatSection
           loading={loading}
           messages={messages ?? []}
-          onSend={(input: string) => SendMessage(input)
-          }
+          onSend={(input: string) => SendMessage(input)}
         />
-        <WebsiteDesign generatedCode={generatedCode?.replace('```','')} />
-        <ElementSetting />
+        <WebsiteDesign generatedCode={generatedCode?.replace('```', '')} />
+        {/* <ElementSetting /> */}
       </div>
-
     </div>
   )
 }
