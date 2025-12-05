@@ -24,7 +24,7 @@ export function AppSidebar() {
             <SidebarHeader >
                 <div className="flex items-center gap-2 mt-3">
                     <Image className="ml-3" src={'/logo.svg'} width={50} height={50} alt="logo" />
-                    <h2 className=" text-2xl text-gray-700">NextBuilder</h2>
+                    <h2 className=" text-2xl text-gray-700">WaveForge AI</h2>
                 </div>
                 <Link href={'/workspace'} className="mt-5 w-full" >
                     <Button className="w-full">
