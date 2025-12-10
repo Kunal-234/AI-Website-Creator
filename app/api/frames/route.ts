@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     const finalResult = {
         ...frameResult[0],
-        chatMessages: chatResult[0].chatMessage
+        chatMessages: chatResult?.[0]?.chatMessage ?? []
     }
 
     return NextResponse.json(finalResult)
@@ -24,7 +24,6 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
     const {designCode, frameId, projectId} = await req.json();
-
 
     const result = await db.update(frameTable).set({
         designCode:designCode

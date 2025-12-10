@@ -33,11 +33,10 @@ const suggestions = [
 ];
 
 const Hero = () => {
-
   const [userInput, setUserInput] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const {user} = useUser();
   const router = useRouter();
-  const [loading, setLoading] = useState<boolean>(false);
 
   const CreateNewProject = async()=>{
     setLoading(true);

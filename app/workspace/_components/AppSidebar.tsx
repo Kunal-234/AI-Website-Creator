@@ -20,7 +20,7 @@ export function AppSidebar() {
     const {userDetail,setUserDetail} = useContext(UserDetailContext)
 
     return (
-        <Sidebar>
+        <Sidebar >
             <SidebarHeader >
                 <div className="flex items-center gap-2 mt-3">
                     <Image className="ml-3" src={'/logo.svg'} width={50} height={50} alt="logo" />
