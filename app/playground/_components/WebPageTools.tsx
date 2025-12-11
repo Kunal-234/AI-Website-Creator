@@ -56,7 +56,7 @@ const WebPageTools = ({ selectedScreenSize, setSelectedScreenSize, generatedCode
     useEffect(() => {
         const cleanCode = (HTML_CODE.replace('{code}', generatedCode) || '')
             .replaceAll("```html", "")
-            .replaceAll("```", "")
+            .replace("```", "")
             .replaceAll('html', '');
 
         setFinalCode(cleanCode);
@@ -71,6 +71,21 @@ const WebPageTools = ({ selectedScreenSize, setSelectedScreenSize, generatedCode
 
         window.open(url, '_blank');
     }
+
+    const downloadCode = ()=>{
+        const blob = new Blob([finalCode??''], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'code.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+
+    }
+
     return (
         <div className='p-2 shadow rounded-xl w-full flex items-center justify-between'>
             <div className='flex gap-2'>
@@ -89,7 +104,7 @@ const WebPageTools = ({ selectedScreenSize, setSelectedScreenSize, generatedCode
                 <ViewCodeBlock code={finalCode}>
                     <Button>Code<Code2Icon /></Button>
                 </ViewCodeBlock>
-                <Button>Download<Download /></Button>
+                <Button onClick={downloadCode}>Download<Download /></Button>
             </div>
 
         </div>
