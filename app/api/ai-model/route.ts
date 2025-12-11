@@ -15,9 +15,13 @@ export async function POST(req: Request) {
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "google/gemini-3-pro-preview",
+        // model: "google/gemini-3-pro-preview",
+        // model: "google/gemini-2.0-flash-exp:free",
+        model: "google/gemma-3-27b-it:free",
+
         reasoning: { enabled: true },
-        max_tokens: 100,
+        // increase max tokens to avoid truncation; tune as needed
+        // max_tokens: 1500,
         messages: messages,
       },
       {
@@ -28,10 +32,24 @@ export async function POST(req: Request) {
       }
     );
 
-    const output = response.data?.choices?.[0]?.message?.content;
+    // Log full response for debugging truncated outputs
+    console.log('AI response:', JSON.stringify(response.data));
+
+    // Robust extraction: OpenRouter/OpenAI-like responses may put text in
+    // different fields depending on model / streaming / format.
+    const choice = response.data?.choices?.[0] || {};
+    const output =
+      // new-style chat message
+      choice?.message?.content ||
+      // older completions style
+      choice?.text ||
+      // delta / streaming piece
+      (choice?.delta && (choice.delta.content || choice.delta.text)) ||
+      // fallback: stringify
+      (typeof response.data === 'string' ? response.data : JSON.stringify(response.data));
 
     // ✅ Return plain text only
-    return new NextResponse(output, {
+    return new NextResponse(String(output), {
       status: 200,
       headers: { "Content-Type": "text/plain" },
     });
