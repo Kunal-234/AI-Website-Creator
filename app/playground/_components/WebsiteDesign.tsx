@@ -2,21 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import WebPageTools from './WebPageTools';
 
-type Props = {
-  generatedCode: string
-}
-function WebsiteDesign({ generatedCode }: Props) {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [selectedScreenSize, setSelectedScreenSize] = useState<'web' | 'mobile'>('web');
-
-  // Initialize iframe shell once
-  useEffect(() => {
-    if (!iframeRef.current) return;
-    const doc = iframeRef.current.contentDocument;
-    if (!doc) return;
-
-    doc.open();
-    doc.write(`
+const HTML_CODE = `
       <!DOCTYPE html>
       <html lang="en">
       <head>
@@ -61,14 +47,113 @@ function WebsiteDesign({ generatedCode }: Props) {
         <div id="root"></div>
       </body>
       </html>
-    `);
+    `
+
+type Props = {
+  generatedCode: string
+}
+
+function WebsiteDesign({ generatedCode }: Props) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [selectedScreenSize, setSelectedScreenSize] = useState<'web' | 'mobile'>('web');
+
+
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    // Write HTML into iframe
+    const doc = iframe.contentDocument;
+    if (!doc) return;
+
+    doc.open();
+    doc.write(HTML_CODE);
     doc.close();
+
+    // Attach listeners only AFTER iframe body exists
+    const onLoad = () => {
+      const doc = iframe.contentDocument;
+      if (!doc || !doc.body) return;
+
+      let hoverEL: HTMLElement | null = null;
+      let selectedEL: HTMLElement | null = null;
+
+      const handleMouseOver = (e: MouseEvent) => {
+        if (selectedEL) return;
+        const target = e.target as HTMLElement;
+
+        if (hoverEL && hoverEL !== target) {
+          hoverEL.style.outline = "";
+        }
+
+        hoverEL = target;
+        hoverEL.style.outline = "2px dotted blue";
+      };
+
+      const handleMouseOut = () => {
+        if (selectedEL) return;
+        if (hoverEL) {
+          hoverEL.style.outline = "";
+          hoverEL = null;
+        }
+      };
+
+      const handleClick = (e: MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const target = e.target as HTMLElement;
+
+        if (selectedEL && selectedEL !== target) {
+          selectedEL.style.outline = "";
+          selectedEL.removeAttribute("contenteditable");
+        }
+
+        selectedEL = target;
+        selectedEL.style.outline = "2px solid red";
+        selectedEL.setAttribute("contenteditable", "true");
+        selectedEL.focus();
+      };
+
+      const handleBlur = () => {
+        if (selectedEL) {
+          selectedEL.outerHTML;
+        }
+      };
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape" && selectedEL) {
+          selectedEL.style.outline = "";
+          selectedEL.removeAttribute("contenteditable");
+          selectedEL = null;
+        }
+      };
+
+      doc.body.addEventListener("mouseover", handleMouseOver);
+      doc.body.addEventListener("mouseout", handleMouseOut);
+      doc.body.addEventListener("click", handleClick);
+      doc.addEventListener("keydown", handleKeyDown);
+
+      // Cleanup
+      return () => {
+        doc.body.removeEventListener("mouseover", handleMouseOver);
+        doc.body.removeEventListener("mouseout", handleMouseOut);
+        doc.body.removeEventListener("click", handleClick);
+        doc.removeEventListener("keydown", handleKeyDown);
+      };
+    };
+
+    iframe.addEventListener("load", onLoad);
+
+    return () => iframe.removeEventListener("load", onLoad);
+
   }, []);
 
-  // Update body only when code changes
+
+  // Update website when user edits code
   useEffect(() => {
-    if (!iframeRef.current) return;
-    const doc = iframeRef.current.contentDocument;
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+    const doc = iframe.contentDocument;
     if (!doc) return;
 
     const root = doc.getElementById("root");
@@ -79,20 +164,21 @@ function WebsiteDesign({ generatedCode }: Props) {
         .replaceAll("</html>", "");
     }
   }, [generatedCode]);
-    
+
   return (
     <div className='p-5 w-full flex items-center flex-col'>
-    <iframe
-      ref={iframeRef}
-      className={`${selectedScreenSize=== 'web'? 'w-full': 'w-120'} h-[600px] border-2 rounded-xl`}
-      sandbox="allow-scripts allow-same-origin"
-    />
-    <WebPageTools selectedScreenSize={selectedScreenSize}
-    setSelectedScreenSize={(val: 'web' | 'mobile') => setSelectedScreenSize(val)}
-    generatedCode={generatedCode}
-    />
+      <iframe
+        ref={iframeRef}
+        className={`${selectedScreenSize === 'web' ? 'w-full' : 'w-120'} h-[600px] border-2 rounded-xl`}
+        sandbox="allow-scripts allow-same-origin"
+      />
+      <WebPageTools
+        selectedScreenSize={selectedScreenSize}
+        setSelectedScreenSize={(val) => setSelectedScreenSize(val)}
+        generatedCode={generatedCode}
+      />
     </div>
   );
 }
 
-export default WebsiteDesign
+export default WebsiteDesign;
