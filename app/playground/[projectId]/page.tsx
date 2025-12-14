@@ -37,7 +37,7 @@ Instructions:
    (e.g., "Create a landing page", "Build a dashboard", "Generate HTML Tailwind CSS code"), then:
 
    - Generate a complete HTML Tailwind CSS code using Flowbite UI components.
-   - Use a modern design with **blue as the primary color theme**.
+   - Use a modern design dark theme as default with light texts color and linear gradient backgroud**.
    - Only include the <body> content (do not add <head> or <title>).
    - Make it fully responsive for all screen sizes.
    - All primary components must match the theme color.
@@ -224,7 +224,7 @@ const Playground = () => {
           onSend={(input: string) => SendMessage(input)}
         />
         <WebsiteDesign generatedCode={generatedCode?.replace('```', '')} />
-        {/* <ElementSetting /> */}
+
       </div>
     </div>
   )
