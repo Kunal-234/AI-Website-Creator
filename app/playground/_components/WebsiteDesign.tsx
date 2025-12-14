@@ -1,6 +1,8 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
 import WebPageTools from './WebPageTools';
+import ElementSetting from './ElementSetting';
+import ImageSettingSection from './ImageSettingsSection';
 
 const HTML_CODE = `
       <!DOCTYPE html>
@@ -56,6 +58,7 @@ type Props = {
 function WebsiteDesign({ generatedCode }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [selectedScreenSize, setSelectedScreenSize] = useState<'web' | 'mobile'>('web');
+  const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
 
 
   useEffect(() => {
@@ -112,6 +115,7 @@ function WebsiteDesign({ generatedCode }: Props) {
         selectedEL.style.outline = "2px solid red";
         selectedEL.setAttribute("contenteditable", "true");
         selectedEL.focus();
+        setSelectedElement(selectedEL);
       };
 
       const handleBlur = () => {
@@ -166,6 +170,7 @@ function WebsiteDesign({ generatedCode }: Props) {
   }, [generatedCode]);
 
   return (
+    <div className='flex gap-2 w-full'>
     <div className='p-5 w-full flex items-center flex-col'>
       <iframe
         ref={iframeRef}
@@ -174,9 +179,22 @@ function WebsiteDesign({ generatedCode }: Props) {
       />
       <WebPageTools
         selectedScreenSize={selectedScreenSize}
-        setSelectedScreenSize={(val) => setSelectedScreenSize(val)}
+        setSelectedScreenSize={(val:'web' | 'mobile') => setSelectedScreenSize(val)}
         generatedCode={generatedCode}
       />
+    </div>
+
+    {/* Element Setting section - only render if selectedElement exists */}
+    {/* {selectedElement && (
+      <ElementSetting selectedEl={selectedElement} clearSelection={()=> setSelectedElement(null)}/>
+    )} */}
+
+    {selectedElement?.tagName=='IMG'?
+    //@ts-ignore
+    <ImageSettingSection selectedEl={selectedElement}/> 
+    : selectedElement?  <ElementSetting selectedEl={selectedElement} clearSelection={()=> setSelectedElement(null)}/> : null
+}
+
     </div>
   );
 }
