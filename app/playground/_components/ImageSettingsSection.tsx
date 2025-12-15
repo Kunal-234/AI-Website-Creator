@@ -24,10 +24,10 @@ type Props = {
 };
 
 const transformOptions = [
-    { label: "Smart Crop", value: "smartcrop", icon: <Crop /> },
-    { label: "Resize", value: "resize", icon: <Expand /> },
-    { label: "Upscale", value: "upscale", icon: <ImageUpscale /> },
-    { label: "BG Remove", value: "bgremove", icon: <ImageMinus /> },
+    { label: "Smart Crop", value: "smartcrop", icon: <Crop /> , transformation: "fo-auto"},
+    { label: "Resize", value: "resize", icon: <Expand />, tranformation: "e-dropshadow"},
+    { label: "Upscale", value: "upscale", icon: <ImageUpscale /> , transformation: "e-upscale"},
+    { label: "BG Remove", value: "bgremove", icon: <ImageMinus />, transformation: "e-bgremove"},
 ];
 
 const imagekit = new ImageKit({
@@ -81,12 +81,26 @@ function ImageSettingSection({ selectedEl }: Props) {
             fileName: Date.now() + ".png",
             isPublished: true,
         })
+        //@ts-ignore
+        selectedEl.setAttribute('src',imageRef?.url + '?tr=')
         setLoading(false)
     }
 
     const openFileDialog = () => {
         fileInputRef.current?.click();
     };
+
+    const GenerateAiImage = async()=>{
+        setLoading(true)
+        const url = `https://ik.imagekit.io/blogImage/ik-genimg-prompt-${altText}/${Date.now()}.png?tr=`;
+        setPreview(url)
+        selectedEl.setAttribute('src',url)
+        setLoading(false)
+    }
+
+    const ApplyTransformation= ()=>{
+        
+    }
 
     return (
         <div className="w-96 shadow p-4 space-y-4">
@@ -101,6 +115,7 @@ function ImageSettingSection({ selectedEl }: Props) {
                     alt={altText}
                     className="max-h-40 object-contain border rounded cursor-pointer hover:opacity-80"
                     onClick={openFileDialog}
+                    onLoad={()=> setLoading(false)}
                 />
             </div>
 
@@ -136,8 +151,8 @@ function ImageSettingSection({ selectedEl }: Props) {
                 />
             </div>
 
-            <Button className="w-full">
-                Generate AI Image
+            <Button className="w-full" onClick={GenerateAiImage} disabled={loading||!altText}>
+              {loading&& <Loader2Icon className="animate-spin"/>} Generate AI Image
             </Button>
 
             {/* Transform Buttons */}
