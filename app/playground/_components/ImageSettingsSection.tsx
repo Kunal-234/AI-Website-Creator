@@ -24,10 +24,10 @@ type Props = {
 };
 
 const transformOptions = [
-    { label: "Smart Crop", value: "smartcrop", icon: <Crop /> , transformation: "fo-auto"},
-    { label: "Resize", value: "resize", icon: <Expand />, tranformation: "e-dropshadow"},
-    { label: "Upscale", value: "upscale", icon: <ImageUpscale /> , transformation: "e-upscale"},
-    { label: "BG Remove", value: "bgremove", icon: <ImageMinus />, transformation: "e-bgremove"},
+    { label: "Smart Crop", value: "smartcrop", icon: <Crop />, transformation: "fo-auto" },
+    { label: "Resize", value: "resize", icon: <Expand />, transformation: "e-dropshadow" },
+    { label: "Upscale", value: "upscale", icon: <ImageUpscale />, transformation: "e-upscale" },
+    { label: "BG Remove", value: "bgremove", icon: <ImageMinus />, transformation: "e-bgremove" },
 ];
 
 const imagekit = new ImageKit({
@@ -59,7 +59,6 @@ function ImageSettingSection({ selectedEl }: Props) {
     };
 
 
-
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -82,7 +81,7 @@ function ImageSettingSection({ selectedEl }: Props) {
             isPublished: true,
         })
         //@ts-ignore
-        selectedEl.setAttribute('src',imageRef?.url + '?tr=')
+        selectedEl.setAttribute('src', imageRef?.url + '?tr=')
         setLoading(false)
     }
 
@@ -90,16 +89,26 @@ function ImageSettingSection({ selectedEl }: Props) {
         fileInputRef.current?.click();
     };
 
-    const GenerateAiImage = async()=>{
+    const GenerateAiImage = async () => {
         setLoading(true)
         const url = `https://ik.imagekit.io/blogImage/ik-genimg-prompt-${altText}/${Date.now()}.png?tr=`;
         setPreview(url)
-        selectedEl.setAttribute('src',url)
-        setLoading(false)
+        selectedEl.setAttribute('src', url)
     }
 
-    const ApplyTransformation= ()=>{
-        
+    const ApplyTransformation = (trVlaue: string) => {
+        setLoading(true)
+
+        if (!preview.includes(trVlaue)) {
+            const url = preview + trVlaue + ','
+            setPreview(url)
+            selectedEl.setAttribute('src', url)
+        }
+        else {
+            const url = preview.replaceAll(trVlaue + ',', '')
+            setPreview(url)
+            selectedEl.setAttribute('src', url)
+        }
     }
 
     return (
@@ -115,7 +124,7 @@ function ImageSettingSection({ selectedEl }: Props) {
                     alt={altText}
                     className="max-h-40 object-contain border rounded cursor-pointer hover:opacity-80"
                     onClick={openFileDialog}
-                    onLoad={()=> setLoading(false)}
+                    onLoad={() => setLoading(false)}
                 />
             </div>
 
@@ -136,7 +145,7 @@ function ImageSettingSection({ selectedEl }: Props) {
                 onClick={saveUploadedFile}
                 disabled={loading}
             >
-             {loading&& <Loader2Icon className="animate-spin"/>}   Upload Image
+                {loading && <Loader2Icon className="animate-spin" />}   Upload Image
             </Button>
 
             {/* Alt text */}
@@ -151,8 +160,8 @@ function ImageSettingSection({ selectedEl }: Props) {
                 />
             </div>
 
-            <Button className="w-full" onClick={GenerateAiImage} disabled={loading||!altText}>
-              {loading&& <Loader2Icon className="animate-spin"/>} Generate AI Image
+            <Button className="w-full" onClick={GenerateAiImage} disabled={loading || !altText}>
+                {loading && <Loader2Icon className="animate-spin" />} Generate AI Image
             </Button>
 
             {/* Transform Buttons */}
@@ -169,7 +178,7 @@ function ImageSettingSection({ selectedEl }: Props) {
                                             type="button"
                                             variant={applied ? "default" : "outline"}
                                             className="flex items-center justify-center p-2"
-                                            onClick={() => toggleTransform(opt.value)}
+                                            onClick={() => ApplyTransformation(opt.transformation)}
                                         >
                                             {opt.icon}
                                         </Button>
