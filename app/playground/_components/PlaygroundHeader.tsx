@@ -1,12 +1,14 @@
 import { Button } from '@/components/ui/button'
+import { OnSaveContext } from '@/context/OnSaveContext'
 import Image from 'next/image'
-import React from 'react'
+import React, { useContext } from 'react'
 
 const PlaygroundHeader = () => {
+  const{onSaveData,setOnSaveData}=useContext(OnSaveContext)
   return (
     <div className='flex justify-between items-center p-4 shadow'>
       <Image className='mx-3' src={'/logo.svg'} alt='logo' height={50} width={50} />
-      <Button>Save</Button>
+      <Button onClick={()=>setOnSaveData(Date.now())}>Save</Button>
     </div>
   )
 }
