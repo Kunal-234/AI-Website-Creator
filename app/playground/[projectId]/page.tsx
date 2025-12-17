@@ -90,13 +90,12 @@ const Playground = () => {
     if (frameId) GetFrameDetails()
   }, [frameId])
 
-  // ✅ Fixed function — null-safe and error-handled
+  
   const GetFrameDetails = async () => {
     try {
       const result = await axios.get(
         `/api/frames?frameId=${frameId}&projectId=${projectId}`
       )
-      console.log(result.data)
       setFrameDetail(result.data)
 
       const designCode = result.data?.designCode
