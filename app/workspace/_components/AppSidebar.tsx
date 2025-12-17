@@ -11,14 +11,24 @@ import {
 } from "@/components/ui/sidebar"
 import { UserDetailContext } from "@/context/UserDetailContext"
 import { UserButton } from "@clerk/nextjs"
+import axios from "axios"
 import Image from "next/image"
 import Link from "next/link"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 
 export function AppSidebar() {
     const [projectlist, setProjectList] = useState([])
-    const {userDetail,setUserDetail} = useContext(UserDetailContext)
+    const { userDetail, setUserDetail } = useContext(UserDetailContext)
 
+    useEffect(() => {
+        GetProjectList()
+    }, [])
+
+    const GetProjectList = async () => {
+        const result = await axios.get('/api/get-all-projects')
+        console.log(result.data)
+        setProjectList(result.data)
+    }
     return (
         <Sidebar >
             <SidebarHeader >
@@ -34,22 +44,30 @@ export function AppSidebar() {
             </SidebarHeader>
             <SidebarContent className="p-2">
                 <SidebarGroup>
-                    <SidebarGroupLabel>Projects</SidebarGroupLabel>
+                    <SidebarGroupLabel className="text-sm">Your Projects</SidebarGroupLabel>
                     {projectlist.length === 0 &&
                         <h2 className="text-sm px-2 text-gray-500">No Project Found</h2>}
+                        {/* //project list here */}
+                    <div>
+                      {projectlist.map((project:any,index)=>(
+                        <div key={index} className="my-1 border hover:bg-secondary rounded-lg p-2 cursor-pointer">
+                            <h2 className="line-clamp-1">{project.chats[0]?.chatMessage[0]?.content}</h2>
+                        </div>
+                      ))}
+                    </div>
                 </SidebarGroup>
                 <SidebarGroup />
             </SidebarContent>
             <SidebarFooter >
                 <div className="p-3 border rounded-xl space-y-3 bg-secondary">
                     <h2 className="flex justify-between items-center">Remaining Credits <span className="font-bold">{userDetail?.credits}</span></h2>
-                    <Progress value={32}/>
+                    <Progress value={32} />
                     <Button className="w-full">
                         Upgrade to Unlimited
                     </Button>
                 </div>
                 <div className="flex items-center mt-2 justify-center">
-                    <UserButton/>
+                    <UserButton />
                     <Button variant={"ghost"} className="font-semibold">Settings</Button>
                 </div>
             </SidebarFooter>
