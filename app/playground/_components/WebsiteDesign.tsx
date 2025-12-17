@@ -1,8 +1,12 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import WebPageTools from './WebPageTools';
 import ElementSetting from './ElementSetting';
 import ImageSettingSection from './ImageSettingsSection';
+import { OnSaveContext } from '@/context/OnSaveContext';
+import axios from 'axios';
+import { toast } from 'sonner';
+import { useParams, useSearchParams } from 'next/navigation';
 
 const HTML_CODE = `
       <!DOCTYPE html>
@@ -59,8 +63,12 @@ function WebsiteDesign({ generatedCode }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [selectedScreenSize, setSelectedScreenSize] = useState<'web' | 'mobile'>('web');
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
+  const { onSaveData, setOnSaveData } = useContext(OnSaveContext)
+  const { projectId } = useParams()
+  const params = useSearchParams()
+  const frameId = params.get('frameId')
 
-
+  //initialize iframe shell once
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
@@ -169,31 +177,71 @@ function WebsiteDesign({ generatedCode }: Props) {
     }
   }, [generatedCode]);
 
+  useEffect(() => {
+    onSaveData && onSaveCode()
+  }, [onSaveData])
+
+  const onSaveCode = async () => {
+    if (iframeRef.current) {
+      try {
+        const iframeDoc = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
+        if (iframeDoc) {
+          const cloneDoc = iframeDoc.documentElement.cloneNode(true) as HTMLElement;
+          //Remove all outlines
+          const AllEls = cloneDoc.querySelectorAll<HTMLElement>('*');
+          AllEls.forEach((el) => {
+            el.style.outline = '';
+            el.style.cursor = '';
+            //  el.removeAttribute('contenteditable');
+          });
+          const html = cloneDoc.outerHTML;
+          console.log("Html to save", html)
+
+          try {
+            const result = await axios.put('/api/frames', {
+              designCode: html,
+              frameId,
+              projectId,
+            })
+            console.log(result.data)
+            toast.success('Saved!')
+          } catch (error) {
+            console.error('Error saving generated code:', error)
+            toast.error('Failed to save generated code')
+          }
+
+        }
+      } catch (e) {
+        console.log("Error", e);
+      }
+    }
+  }
+
   return (
     <div className='flex gap-2 w-full'>
-    <div className='p-5 w-full flex items-center flex-col'>
-      <iframe
-        ref={iframeRef}
-        className={`${selectedScreenSize === 'web' ? 'w-full' : 'w-120'} h-[600px] border-2 rounded-xl`}
-        sandbox="allow-scripts allow-same-origin"
-      />
-      <WebPageTools
-        selectedScreenSize={selectedScreenSize}
-        setSelectedScreenSize={(val:'web' | 'mobile') => setSelectedScreenSize(val)}
-        generatedCode={generatedCode}
-      />
-    </div>
+      <div className='p-5 w-full flex items-center flex-col'>
+        <iframe
+          ref={iframeRef}
+          className={`${selectedScreenSize === 'web' ? 'w-full' : 'w-120'} h-[600px] border-2 rounded-xl`}
+          sandbox="allow-scripts allow-same-origin"
+        />
+        <WebPageTools
+          selectedScreenSize={selectedScreenSize}
+          setSelectedScreenSize={(val: 'web' | 'mobile') => setSelectedScreenSize(val)}
+          generatedCode={generatedCode}
+        />
+      </div>
 
-    {/* Element Setting section - only render if selectedElement exists */}
-    {/* {selectedElement && (
+      {/* Element Setting section - only render if selectedElement exists */}
+      {/* {selectedElement && (
       <ElementSetting selectedEl={selectedElement} clearSelection={()=> setSelectedElement(null)}/>
     )} */}
 
-    {selectedElement?.tagName=='IMG'?
-    //@ts-ignore
-    <ImageSettingSection selectedEl={selectedElement}/> 
-    : selectedElement?  <ElementSetting selectedEl={selectedElement} clearSelection={()=> setSelectedElement(null)}/> : null
-}
+      {selectedElement?.tagName == 'IMG' ?
+        //@ts-ignore
+        <ImageSettingSection selectedEl={selectedElement} />
+        : selectedElement ? <ElementSetting selectedEl={selectedElement} clearSelection={() => setSelectedElement(null)} /> : null
+      }
 
     </div>
   );
