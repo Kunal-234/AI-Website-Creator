@@ -4,7 +4,7 @@ import React from 'react'
 
 const AppHeader = () => {
   return (
-    <div className='flex justify-between items-center p-4 shadow'>
+    <div className='flex justify-between items-center p-4 border-b '>
       <SidebarTrigger/>
       <UserButton/>
     </div>

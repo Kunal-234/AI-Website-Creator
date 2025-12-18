@@ -90,10 +90,10 @@ const WebPageTools = ({ selectedScreenSize, setSelectedScreenSize, generatedCode
         <div className='p-2 shadow rounded-xl w-full flex items-center justify-between'>
             <div className='flex gap-2'>
                 <Button variant={'ghost'}
-                    className={`${selectedScreenSize === 'web' ? 'border border-primary bg-gray-100' : ''}`}
+                    className={`${selectedScreenSize === 'web' ? 'border border-primary bg-white/10' : ''}`}
                     onClick={() => setSelectedScreenSize('web')}><Monitor /></Button>
                 <Button variant={'ghost'}
-                    className={`${selectedScreenSize === 'mobile' ? 'border border-primary bg-gray-100' : ''}`}
+                    className={`${selectedScreenSize === 'mobile' ? 'border border-primary bg-white/10' : ''}`}
                     onClick={() => setSelectedScreenSize('mobile')}><TabletSmartphone /></Button>
             </div>
 
@@ -102,9 +102,9 @@ const WebPageTools = ({ selectedScreenSize, setSelectedScreenSize, generatedCode
                     onClick={() => ViewInNewTab()}>View <SquareArrowOutUpRight />
                 </Button>
                 <ViewCodeBlock code={finalCode}>
-                    <Button>Code<Code2Icon /></Button>
+                    <Button className='bg-white/20 text-white hover:bg-white/10'>Code<Code2Icon /></Button>
                 </ViewCodeBlock>
-                <Button onClick={downloadCode}>Download<Download /></Button>
+                <Button className='bg-white/20 text-white hover:bg-white/10' onClick={downloadCode}>Download<Download /></Button>
             </div>
 
         </div>

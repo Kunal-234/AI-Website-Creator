@@ -61,6 +61,7 @@ type Props = {
 
 function WebsiteDesign({ generatedCode }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeBlank, setIframeBlank] = useState(true);
   const [selectedScreenSize, setSelectedScreenSize] = useState<'web' | 'mobile'>('web');
   const [selectedElement, setSelectedElement] = useState<HTMLElement | null>(null);
   const { onSaveData, setOnSaveData } = useContext(OnSaveContext)
@@ -80,6 +81,8 @@ function WebsiteDesign({ generatedCode }: Props) {
     doc.open();
     doc.write(HTML_CODE);
     doc.close();
+    // initial state: treat as blank until content is populated
+    setIframeBlank(true);
 
     // Attach listeners only AFTER iframe body exists
     const onLoad = () => {
@@ -145,6 +148,18 @@ function WebsiteDesign({ generatedCode }: Props) {
       doc.body.addEventListener("click", handleClick);
       doc.addEventListener("keydown", handleKeyDown);
 
+      // determine whether iframe has content inside #root
+      try {
+        const rootEl = doc.getElementById('root');
+        if (rootEl && rootEl.innerHTML && rootEl.innerHTML.trim() !== '') {
+          setIframeBlank(false);
+        } else {
+          setIframeBlank(true);
+        }
+      } catch (e) {
+        setIframeBlank(true);
+      }
+
       // Cleanup
       return () => {
         doc.body.removeEventListener("mouseover", handleMouseOver);
@@ -174,6 +189,7 @@ function WebsiteDesign({ generatedCode }: Props) {
         .replaceAll("<!DOCTYPE html>", "")
         .replaceAll("<html>", "")
         .replaceAll("</html>", "");
+      setIframeBlank(root.innerHTML.trim() === '');
     }
   }, [generatedCode]);
 
@@ -220,11 +236,17 @@ function WebsiteDesign({ generatedCode }: Props) {
   return (
     <div className='flex gap-2 w-full'>
       <div className='p-5 w-full flex items-center flex-col'>
-        <iframe
-          ref={iframeRef}
-          className={`${selectedScreenSize === 'web' ? 'w-full' : 'w-120'} h-[600px] border-2 rounded-xl`}
-          sandbox="allow-scripts allow-same-origin"
-        />
+        <div className={`${selectedScreenSize === 'web' ? 'w-full' : 'w-120'} relative`}>
+          <iframe
+            ref={iframeRef}
+            style={{ background: 'transparent' }}
+            className={`h-[600px] w-full border-2 rounded-xl z-0`}
+            sandbox="allow-scripts allow-same-origin"
+          />
+          {iframeBlank && (
+            <div className="absolute inset-0 rounded-xl bg-white/10 z-10" />
+          )}
+        </div>
         <WebPageTools
           selectedScreenSize={selectedScreenSize}
           setSelectedScreenSize={(val: 'web' | 'mobile') => setSelectedScreenSize(val)}

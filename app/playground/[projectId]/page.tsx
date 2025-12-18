@@ -37,7 +37,9 @@ Instructions:
    (e.g., "Create a landing page", "Build a dashboard", "Generate HTML Tailwind CSS code"), then:
 
    - Generate a complete HTML Tailwind CSS code using Flowbite UI components.
-   - Use a modern design dark theme as default with light texts color and linear gradient backgroud**.
+   - Use a modern design dark theme as default and linear gradient backgroud**.
+   - do not use any white background component.
+   - do not give any explaination after the code.
    - Only include the <body> content (do not add <head> or <title>).
    - Make it fully responsive for all screen sizes.
    - All primary components must match the theme color.

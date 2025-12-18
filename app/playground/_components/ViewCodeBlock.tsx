@@ -31,7 +31,7 @@ const ViewCodeBlock = ({children,code}:any) => {
         <DialogContent className="min-w-5xl max-h-[600px] overflow-auto">
 
           <DialogHeader>
-            <DialogTitle> <div className='flex items-center px-4'>Source Code<Button className='ml-190' onClick={handleCopy}><Copy/></Button></div></DialogTitle>
+            <DialogTitle> <div className='flex items-center px-4'>Source Code<Button variant={'outline'} className='ml-190' onClick={handleCopy}><Copy/></Button></div></DialogTitle>
             <DialogDescription>
                 <div>
                     <SyntaxHighlighter

@@ -110,7 +110,7 @@ function ElementSettingSection({ selectedEl, clearSelection }: Props) {
                     <label className='text-sm block'>Text Color</label>
                     <input type='color'
                         className='w-[40px] h-[40px] rounded-lg mt-1'
-                        value={selectedEl?.style?.color || '#000000'}
+                        value={selectedEl?.style?.color || '#3d7f8a'}
                         onChange={(event) => applyStyle('color', event.target.value)}
                     />
                 </div>
@@ -123,15 +123,15 @@ function ElementSettingSection({ selectedEl, clearSelection }: Props) {
                     type="single"
                     value={align}
                     onValueChange={setAlign}
-                    className="bg-gray-100 rounded-lg p-1 inline-flex w-full justify-between"
+                    className="bg-white/10 rounded-lg p-1 inline-flex w-full justify-between"
                 >
-                    <ToggleGroupItem value="left" className="p-2 rounded hover:bg-gray-200 flex-1">
+                    <ToggleGroupItem value="left" className="p-2 rounded hover:bg-transparent flex-1">
                         <AlignLeft size={20} />
                     </ToggleGroupItem>
-                    <ToggleGroupItem value="center" className="p-2 rounded hover:bg-gray-200 flex-1">
+                    <ToggleGroupItem value="center" className="p-2 rounded hover:bg-transparent flex-1">
                         <AlignCenter size={20} />
                     </ToggleGroupItem>
-                    <ToggleGroupItem value="right" className="p-2 rounded hover:bg-gray-200 flex-1">
+                    <ToggleGroupItem value="right" className="p-2 rounded hover:bg-transparent flex-1">
                         <AlignRight size={20} />
                     </ToggleGroupItem>
                 </ToggleGroup>
@@ -143,7 +143,7 @@ function ElementSettingSection({ selectedEl, clearSelection }: Props) {
                     <label className='text-sm block'>Background</label>
                     <input type='color'
                         className='w-[40px] h-[40px] rounded-lg mt-1'
-                        defaultValue={selectedEl?.style?.backgroundColor || '#ffffff'}
+                        defaultValue={selectedEl?.style?.backgroundColor || '#0a467b'}
                         onChange={(event) => applyStyle('backgroundColor', event.target.value)}
                     />
                 </div>
@@ -191,12 +191,12 @@ function ElementSettingSection({ selectedEl, clearSelection }: Props) {
                         classes.map((cls) => (
                             <span
                                 key={cls}
-                                className="flex t items-center gap-1 px-2 py-1 text-sm rounded-full bg-gray-100 border"
+                                className="flex t items-center gap-1 px-2 py-1 text-sm rounded-full bg-white/5 border"
                             >
                                 {cls}
                                 <button
                                     onClick={() => removeClass(cls)}
-                                    className="ml-1 text-red-500 hover:text-red-700"
+                                    className="ml-1 text-red-300 hover:text-red-500"
                                 >
                                     ×
                                 </button>
