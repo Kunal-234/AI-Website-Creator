@@ -9,6 +9,7 @@ import {
     SidebarGroupLabel,
     SidebarHeader,
 } from "@/components/ui/sidebar"
+import { Skeleton } from "@/components/ui/skeleton"
 import { UserDetailContext } from "@/context/UserDetailContext"
 import { UserButton } from "@clerk/nextjs"
 import axios from "axios"
@@ -19,15 +20,18 @@ import { useContext, useEffect, useState } from "react"
 export function AppSidebar() {
     const [projectlist, setProjectList] = useState([])
     const { userDetail, setUserDetail } = useContext(UserDetailContext)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         GetProjectList()
     }, [])
 
     const GetProjectList = async () => {
+        setLoading(true)
         const result = await axios.get('/api/get-all-projects')
         console.log(result.data)
         setProjectList(result.data)
+        setLoading(false)
     }
     return (
         <Sidebar >
@@ -45,15 +49,19 @@ export function AppSidebar() {
             <SidebarContent className="p-2">
                 <SidebarGroup>
                     <SidebarGroupLabel className="text-sm">Your Projects</SidebarGroupLabel>
-                    {projectlist.length === 0 &&
+                    {!loading && projectlist.length === 0 &&
                         <h2 className="text-sm px-2 text-gray-500">No Project Found</h2>}
-                        {/* //project list here */}
+                    {/* //project list here */}
                     <div>
-                      {projectlist.map((project:any,index)=>(
-                        <div key={index} className="my-1 border hover:bg-secondary rounded-lg p-2 cursor-pointer">
-                            <h2 className="line-clamp-1">{project.chats[0]?.chatMessage[0]?.content}</h2>
-                        </div>
-                      ))}
+                        {(!loading && projectlist.length > 0) ? projectlist.map((project: any, index) => (
+                            <Link href={`/playground/${project.projectId}?frameId=${project.frameId}`} key={index} className="my-1 border hover:bg-secondary rounded-lg p-2 cursor-pointer">
+                                <h2 className="line-clamp-1">{project.chats[0]?.chatMessage[0]?.content}</h2>
+                            </Link>
+                        )) :
+                            [1, 2, 3, 4, 5].map((_, index) => (
+                                <Skeleton key={index} className="w-full h-8 rounded-lg mt-2 " />
+                            ))
+                        }
                     </div>
                 </SidebarGroup>
                 <SidebarGroup />
