@@ -37,7 +37,7 @@ export function AppSidebar() {
         <Sidebar >
             <SidebarHeader >
                 <div className="flex items-center gap-2 mt-3">
-                    <Image className="ml-3" src={'/logo1.svg'} width={50} height={50} alt="logo" />
+                    <Image className="ml-3" src={'/logo2.svg'} width={50} height={50} alt="logo" />
                     <h2 className=" text-2xl">WaveForge AI</h2>
                 </div>
                 {/* <Link href={'/workspace'} className="mt-5 w-full" >
