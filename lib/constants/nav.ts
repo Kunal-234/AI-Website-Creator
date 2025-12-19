@@ -1,8 +1,8 @@
 export const navMenuLinksSignedIn = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/dashboard/billing", label: "Pricing" },
+  { href: "/workspace", label: "Workspace" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "About us" },
-  { href: "/dashboard/settings", label: "Settings" },
+  { href: "/settings", label: "Settings" },
 ]
 
 export const navMenuLinksSignedOut = [

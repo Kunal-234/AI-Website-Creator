@@ -20,14 +20,14 @@ export default function Header() {
   const { signOut } = useClerk()
 
   return (
-    <header className=" supports-backdrop-blur:bg-background/4 bg-background/2 sticky top-0 z-40 w-full border-b border-purple-400/30 px-6 py-4 backdrop-blur-lg">
+    <header className=" supports-backdrop-blur:bg-background/5 bg-background/5 sticky top-0 z-40 w-full border-b border-teal-400/30 px-6 py-4 backdrop-blur-sm">
       <div className="mx-auto flex max-w-5xl items-center justify-between">
         {/* LEFT SIDE — logo + nav links */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-1">
-            <Image src='/logo1.svg' height={36} width={36} alt='logo' />
+            <Image src='/logo3.svg' height={36} width={36} alt='logo' />
             <h1 className="font-bold text-2xl px-2 tracking-tight">
-              <span className='text-transparent bg-clip-text bg-gradient-to-r from-violet-600 via-purple-500 to-blue-400'>WaveForge AI</span>
+              <span className='text-transparent bg-clip-text bg-gradient-to-br from-teal-600 via-teal-300 to-white'>WaveForge AI</span>
               </h1>
           </Link>
 
@@ -38,7 +38,7 @@ export default function Header() {
                 <Link
                   href={link.href}
                   key={link.href}
-                  className="rounded-none px-3 py-1.5 text-[14px] text-white/80  hover:bg-purple-950/40 "
+                  className="rounded-none px-3 py-1.5 text-[14px] text-white/80  hover:bg-teal-950/40 "
                 >
                   {link.label}
                 </Link>
@@ -50,7 +50,7 @@ export default function Header() {
                 <Link
                   href={link.href}
                   key={link.href}
-                  className="rounded-none px-3 py-1.5 text-[14px] text-white/80  hover:bg-purple-950/40 "
+                  className="rounded-none px-3 py-1.5 text-[14px] text-white/80  hover:bg-teal-950/40 "
                 >
                   {link.label}
                 </Link>
@@ -77,11 +77,11 @@ export default function Header() {
             // </Badge>
             <div className="font-geist flex items-center gap-2">
               {/* <AnimatedThemeToggler/> */}
-              <h1>Toggle</h1>
+              {/* <h1>Toggle</h1> */}
               <Button
                 size="sm"
                 variant="secondary"
-                className="cursor-pointer bg-purple-100 border border-purple-200 rounded-none font-bold shadow-none"
+                className="cursor-pointer bg-teal-900 border border-teal-800 rounded-none font-bold shadow-none"
                 onClick={() => router.push('/sign-in')}
               >
                 Log in
