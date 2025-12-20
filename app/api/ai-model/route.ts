@@ -32,8 +32,6 @@ export async function POST(req: Request) {
       }
     );
 
-    // Log full response for debugging truncated outputs
-    console.log('AI response:', JSON.stringify(response.data));
 
     // Robust extraction: OpenRouter/OpenAI-like responses may put text in
     // different fields depending on model / streaming / format.
