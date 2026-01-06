@@ -27,7 +27,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-1">
             <Image src='/logo3.svg' height={36} width={36} alt='logo' />
             <h1 className="font-bold text-2xl px-2 tracking-tight">
-              <span className='text-transparent bg-clip-text bg-gradient-to-br from-teal-600 via-teal-300 to-white'>WaveForge AI</span>
+              <span className='text-transparent bg-clip-text bg-linear-to-br from-teal-600 via-teal-300 to-white'>WaveForge AI</span>
               </h1>
           </Link>
 
@@ -81,14 +81,14 @@ export default function Header() {
               <Button
                 size="sm"
                 variant="secondary"
-                className="cursor-pointer bg-teal-900 border border-teal-800 rounded-none font-bold shadow-none"
+                className="cursor-pointer bg-teal-300/50 border border-teal-900 rounded-full px-5 font-bold shadow-none"
                 onClick={() => router.push('/sign-in')}
               >
                 Log in
               </Button>
               <Button
                 size="sm"
-                className="cursor-pointer rounded-none font-semibold"
+                className="cursor-pointer rounded-full px-5 font-semibold bg-white/70"
                 onClick={() => router.push('/sign-up')}
               >
                 Sign up
@@ -99,7 +99,7 @@ export default function Header() {
               {/* <ModeToggleButton /> */}
               {/* <AnimatedThemeToggler/> */}
               <Button
-                className="font-geist cursor-pointer rounded-none"
+                className="font-geist cursor-pointer px-5 bg-white/70 rounded-full"
                 onClick={() => {
                   signOut()
                   setTheme('light') // force light mode on sign out
