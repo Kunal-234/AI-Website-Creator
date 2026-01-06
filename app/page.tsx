@@ -37,6 +37,9 @@ export default function Home() {
             Learn More
           </button>
         </div>
+        <div className="mt-10 md:hidden text-white/70 text-sm max-w-xl">
+          // Use this app on your desktop only or use desktop mode in your mobile browser for the best experience.
+        </div>
       </div>
     </div>
   );
